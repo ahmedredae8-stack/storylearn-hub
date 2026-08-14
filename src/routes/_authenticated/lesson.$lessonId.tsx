@@ -12,6 +12,7 @@ import { GEMS_PER_LESSON, loseHeart, nextStreak, regenerated } from "@/lib/econo
 import { characterImage } from "@/lib/characterImage";
 import { toast } from "sonner";
 import mascot from "@/assets/mascot.png";
+import { BrandMascot } from "@/components/BrandMascot";
 import { Check, ChevronUp, Loader2, Target, Sparkles, X, Trophy, Heart } from "lucide-react";
 
 
@@ -263,7 +264,7 @@ function LessonPlayer() {
           {/* Intro — first card in the same conversation */}
           <div className="rounded-3xl border-2 border-border bg-card overflow-hidden animate-in fade-in duration-300">
             <div className="bg-primary text-primary-foreground p-5 text-center">
-              <img src={mascot} alt="" width={72} height={72} className="mx-auto w-18 h-18 animate-bob" />
+              <BrandMascot slot="mascot_lesson" size={72} className="mx-auto w-18 h-18 animate-bob object-contain" />
               <div className="text-[11px] font-extrabold opacity-80 mt-1">الوحدة {String(lesson["unit"] ?? 1)}</div>
               <h1 className="text-xl font-extrabold">{String(lesson["title"] ?? "")}</h1>
             </div>
@@ -384,7 +385,7 @@ function Bubble({ step, character, answer, onAnswer, onCodePass, lessonId, siteD
       <div className="animate-in fade-in slide-in-from-bottom-6 duration-500 ease-out space-y-3">
         {step.content && (
           <div className="flex items-start gap-2.5">
-            {character ? <AvatarBubble id={img} size={40} /> : <img src={mascot} alt="" width={40} height={40} className="w-10 h-10 shrink-0" />}
+            {character ? <AvatarBubble id={img} size={40} /> : <BrandMascot slot="mascot_lesson" size={40} className="w-10 h-10 shrink-0 object-contain" />}
             <p className="flex-1 rounded-3xl rounded-tr-md bg-card border-2 border-border px-4 py-3 text-[15px] font-bold leading-8">{step.content}</p>
           </div>
         )}
@@ -399,7 +400,7 @@ function Bubble({ step, character, answer, onAnswer, onCodePass, lessonId, siteD
       <div className="animate-in fade-in slide-in-from-bottom-6 duration-500 ease-out space-y-3">
         {step.content && (
           <div className="flex items-start gap-2.5">
-            {character ? <AvatarBubble id={img} size={40} /> : <img src={mascot} alt="" width={40} height={40} className="w-10 h-10 shrink-0" />}
+            {character ? <AvatarBubble id={img} size={40} /> : <BrandMascot slot="mascot_lesson" size={40} className="w-10 h-10 shrink-0 object-contain" />}
             <p className="flex-1 rounded-3xl rounded-tr-md bg-card border-2 border-border px-4 py-3 text-[15px] font-bold leading-8">{step.content}</p>
           </div>
         )}
@@ -435,7 +436,7 @@ function Bubble({ step, character, answer, onAnswer, onCodePass, lessonId, siteD
 
   return (
     <div className="flex items-start gap-2.5 sm:gap-3 animate-in fade-in slide-in-from-right-10 duration-500 ease-out">
-      {character ? <AvatarBubble id={img} size={44} /> : <img src={mascot} alt="" width={44} height={44} className="w-11 h-11 shrink-0" />}
+      {character ? <AvatarBubble id={img} size={44} /> : <BrandMascot slot="mascot_lesson" size={44} className="w-11 h-11 shrink-0 object-contain" />}
       <div className="flex-1 min-w-0">
         {character && <div className="mb-1 text-[12px] font-extrabold" style={{ color: character.color }}>{character.name}</div>}
         <div className="rounded-3xl rounded-tr-md bg-card border-2 border-border px-4 py-3.5 shadow-sm">

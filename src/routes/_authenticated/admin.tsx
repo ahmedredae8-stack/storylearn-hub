@@ -9,11 +9,12 @@ import { AvatarBubble } from "@/components/AvatarBubble";
 import { characterImage } from "@/lib/characterImage";
 import { LessonEditor, MOODS } from "@/components/admin/LessonEditor";
 import { CoursesPanel } from "@/components/admin/CoursesPanel";
+import { BrandingPanel } from "@/components/admin/BrandingPanel";
 import { uploadFile } from "@/lib/upload";
 import { toast } from "sonner";
 import {
   Loader2, Users, GraduationCap, Rocket, MessageCircle, Trash2, Plus, ShieldCheck, Save,
-  Ban, Pencil, Bell, Upload, ShieldOff, CheckCircle2, BookOpen,
+  Ban, Pencil, Bell, Upload, ShieldOff, CheckCircle2, BookOpen, Image as ImageIcon,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "students" | "courses" | "lessons" | "characters" | "projects" | "notify";
+type Tab = "students" | "courses" | "lessons" | "characters" | "projects" | "notify" | "branding";
 
 function AdminPage() {
   const { data: isAdmin, isLoading } = useIsAdmin();
@@ -66,13 +67,14 @@ function AdminPage() {
           <h1 className="text-2xl font-extrabold">لوحة الأدمن</h1>
         </div>
 
-        <div className="grid grid-cols-6 gap-1 bg-secondary p-1 rounded-2xl mb-5 text-[10px] sm:text-sm">
+        <div className="grid grid-cols-4 sm:grid-cols-7 gap-1 bg-secondary p-1 rounded-2xl mb-5 text-[10px] sm:text-sm">
           <TabBtn active={tab === "students"} onClick={() => setTab("students")} icon={<Users className="w-4 h-4" />} label="الطلاب" />
           <TabBtn active={tab === "courses"} onClick={() => setTab("courses")} icon={<BookOpen className="w-4 h-4" />} label="الكورسات" />
           <TabBtn active={tab === "lessons"} onClick={() => setTab("lessons")} icon={<GraduationCap className="w-4 h-4" />} label="الدروس" />
           <TabBtn active={tab === "characters"} onClick={() => setTab("characters")} icon={<Users className="w-4 h-4" />} label="الشخصيات" />
           <TabBtn active={tab === "projects"} onClick={() => setTab("projects")} icon={<Rocket className="w-4 h-4" />} label="المشاريع" />
           <TabBtn active={tab === "notify"} onClick={() => setTab("notify")} icon={<Bell className="w-4 h-4" />} label="إشعارات" />
+          <TabBtn active={tab === "branding"} onClick={() => setTab("branding")} icon={<ImageIcon className="w-4 h-4" />} label="المظهر" />
         </div>
 
         {tab === "students" && <StudentsPanel />}
@@ -81,6 +83,7 @@ function AdminPage() {
         {tab === "characters" && <CharactersPanel />}
         {tab === "projects" && <ProjectsPanel />}
         {tab === "notify" && <NotifyPanel />}
+        {tab === "branding" && <BrandingPanel />}
       </main>
       <BottomNav />
       {lesson && <LessonEditor lessonId={lesson} onClose={() => navigate({ to: "/admin", search: {} })} />}

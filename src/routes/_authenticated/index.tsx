@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Lock, Check, Star, Trophy, Sparkles, Pencil, Loader2, Target } from "lucide-react";
-import mascot from "@/assets/mascot.png";
+import { BrandMascot } from "@/components/BrandMascot";
 import cloud from "@/assets/cloud.png";
 
 import { BottomNav } from "@/components/BottomNav";
@@ -172,7 +172,7 @@ function MascotPanel() {
   const { data: profile } = useProfile();
   return (
     <div className="mx-4 mt-4 mb-2 rounded-2xl bg-card border border-border p-4 flex items-center gap-3 shadow-sm">
-      <img src={mascot} alt="زكي المساعد" width={64} height={64} className="w-16 h-16 animate-bob" loading="eager" />
+      <BrandMascot slot="mascot_home" alt="زكي المساعد" size={64} className="w-16 h-16 animate-bob object-contain" />
       <div className="flex-1">
         <div className="text-sm font-extrabold">أهلاً {profile?.display_name ?? ""}! أنا زكي 🤖</div>
         <div className="text-xs text-muted-foreground">أكمل درسك اليومي واحصل على +5 جواهر.</div>
