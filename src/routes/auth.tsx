@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Sparkles, MessageCircle, Trophy, Rocket, ShieldCheck, Wand2, ChevronDown } from "lucide-react";
 import { NilexLogo } from "@/components/NilexLogo";
-import mascot from "@/assets/mascot.png";
+import { BrandMascot } from "@/components/BrandMascot";
 import cloud from "@/assets/cloud.png";
 import boy from "@/assets/avatar-boy.png";
 import girl from "@/assets/avatar-girl.png";
@@ -94,19 +94,19 @@ function LandingPage() {
             <div className="rounded-[2rem] border-4 border-border bg-card shadow-xl p-3">
               <div className="rounded-3xl bg-secondary/40 p-3 space-y-3">
                 <div className="flex items-start gap-2">
-                  <img src={mascot} alt="" width={36} height={36} className="w-9 h-9 animate-bob" />
+                  <BrandMascot slot="mascot_landing" size={36} className="w-9 h-9 animate-bob object-contain" />
                   <div className="rounded-2xl rounded-tr-sm bg-card border-2 border-border px-3 py-2 text-[12px] font-bold leading-6">
-                    أهلاً! أنا زكي 🤖 هعلّمك تستخدم أدوات الذكاء الاصطناعي صح.
+                    أهلاً! أنا زكي 🤖 في 5 دقائق النهاردة هتتعلّم تكتب أمراً ذكياً يطلّع نتيجة احترافية.
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <img src={girl} alt="" width={36} height={36} className="w-9 h-9 rounded-full object-cover" />
                   <div className="rounded-2xl rounded-tr-sm bg-card border-2 border-border px-3 py-2 text-[12px] font-bold leading-6">
-                    وأنا نور… جربنا اليوم نخلي المساعد يكتب لنا قصة! ✨
+                    وأنا نور ✨ خلّينا نجرّب سوا: اطلب من المساعد خطة مذاكرة لأسبوع… وشوف الفرق.
                   </div>
                 </div>
                 <div className="rounded-2xl border-2 border-heart/40 bg-heart/5 px-3 py-2 text-[11px] font-extrabold text-heart">
-                  👆 اضغط الزر الأحمر لتتعلّم الخطوة الجديدة
+                  🎯 مهمتك الأولى: جرّب الأداة بنفسك داخل الدرس واكسب أول 10 نقاط
                 </div>
                 <div className="rounded-full border-2 border-input bg-background flex items-center gap-2 px-2 py-1.5">
                   <span className="w-7 h-7 rounded-full bg-heart text-primary-foreground grid place-items-center text-xs font-extrabold">+</span>
@@ -175,7 +175,7 @@ function LandingPage() {
       <section ref={formRef} className="pb-16 px-4">
         <div className="mx-auto w-full max-w-md">
           <div className="text-center mb-5">
-            <img src={mascot} alt="" width={72} height={72} className="mx-auto w-18 h-18 animate-bob" />
+            <BrandMascot slot="mascot_landing" size={72} className="mx-auto w-18 h-18 animate-bob object-contain" />
             <h2 className="text-xl font-extrabold mt-2">يلا نبدأ رحلتك 🚀</h2>
             <p className="text-xs font-bold text-muted-foreground mt-1">مجاني تماماً — دقيقة واحدة وتكون جوّه.</p>
           </div>

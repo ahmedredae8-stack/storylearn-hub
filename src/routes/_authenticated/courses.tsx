@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppTopBar } from "@/components/AppTopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { Loader2, Lock, Crown, Check, PlayCircle } from "lucide-react";
-import mascot from "@/assets/mascot.png";
+import { BrandMascot } from "@/components/BrandMascot";
 import cloud from "@/assets/cloud.png";
 
 export const Route = createFileRoute("/_authenticated/courses")({
@@ -149,7 +149,7 @@ function CoursesPage() {
 
       <main className="mx-auto w-full max-w-2xl px-4 pt-4">
         <div className="rounded-3xl bg-primary text-primary-foreground p-5 sm:p-6 flex items-center gap-4 overflow-hidden">
-          <img src={mascot} alt="" width={72} height={72} className="w-16 h-16 sm:w-20 sm:h-20 animate-bob shrink-0" />
+          <BrandMascot slot="mascot_courses" size={72} className="w-16 h-16 sm:w-20 sm:h-20 animate-bob shrink-0 object-contain" />
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl font-extrabold">الكورسات ✨</h1>
             <p className="text-xs sm:text-sm font-bold opacity-90 mt-1 leading-relaxed">
