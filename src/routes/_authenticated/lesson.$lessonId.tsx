@@ -373,8 +373,11 @@ function LessonPlayer() {
 
 function Bubble({ step, character, answer, onAnswer, onCodePass, lessonId, siteDone, onSiteDone }: { step: Step; character?: Character; answer?: number; onAnswer: (i: number) => void; onCodePass?: () => void; lessonId: string; siteDone?: boolean; onSiteDone?: () => void }) {
   const img = moodImage(character, step.mood);
-  const opts = step.options as { choices?: string[]; answer?: number } | null;
+  const opts = step.options as { choices?: string[]; answer?: number; media?: { image?: string; video?: string } } | null;
   const choices = opts?.choices ?? [];
+  // A single message may mix text + image + video.
+  const imageUrl = opts?.media?.image ?? (step.kind === "image" ? step.media_url : null);
+  const videoUrl = opts?.media?.video ?? (step.kind === "video" ? step.media_url : null);
   const demo = isChatDemo(step.options);
   const lab = isCodeLab(step.options);
   const site = isSiteView(step.options);
@@ -420,7 +423,7 @@ function Bubble({ step, character, answer, onAnswer, onCodePass, lessonId, siteD
 
 
   // Media step whose file has not been uploaded yet — keep the flow pretty instead of an empty bubble.
-  const mediaPending = (step.kind === "image" || step.kind === "video") && !step.media_url && !step.content;
+  const mediaPending = (step.kind === "image" || step.kind === "video") && !imageUrl && !videoUrl && !step.content;
   if (mediaPending) {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-6 duration-500 ease-out rounded-3xl border-2 border-dashed border-border bg-secondary/40 p-5 text-center">
@@ -444,11 +447,11 @@ function Bubble({ step, character, answer, onAnswer, onCodePass, lessonId, siteD
 
           {demo && <div className="mt-3 -mx-1"><ChatMockup demo={demo} /></div>}
 
-          {step.kind === "image" && step.media_url && (
-            <img src={step.media_url} alt={step.content ?? "صورة الدرس"} loading="lazy" className="mt-3 rounded-2xl w-full" />
+          {imageUrl && (
+            <img src={imageUrl} alt={step.content ?? "صورة الدرس"} loading="lazy" className="mt-3 rounded-2xl w-full" />
           )}
-          {step.kind === "video" && step.media_url && (
-            <video src={step.media_url} controls className="mt-3 rounded-2xl w-full" />
+          {videoUrl && (
+            <video src={videoUrl} controls className="mt-3 rounded-2xl w-full" />
           )}
 
 
