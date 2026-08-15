@@ -272,6 +272,9 @@ function StepRow({ step, index, total, characters, lessonId }: {
   const [busy, setBusy] = useState(false);
   const initialLab = isCodeLab(step.options);
   const [labJson, setLabJson] = useState(initialLab ? JSON.stringify(initialLab, null, 2) : "");
+  const initialSite = isSiteView(step.options);
+  const [site, setSite] = useState<SiteSpec>(initialSite ?? { tabs: [] });
+
 
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin-steps", lessonId] });
 
