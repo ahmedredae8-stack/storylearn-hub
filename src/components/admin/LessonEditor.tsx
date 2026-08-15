@@ -289,10 +289,16 @@ function StepRow({ step, index, total, characters, lessonId }: {
   async function save() {
     let options: unknown = step.options ?? null;
     if (step.kind === "question") options = { choices, answer };
+    else if (initialSite) {
+      const tabs = (site.tabs ?? []).filter((t) => t.url.trim());
+      if (!tabs.length) return toast.error("أضف رابط موقع واحد على الأقل");
+      options = { site: { ...site, tabs, key: site.key || tabs[0].url } };
+    }
     else if (initialLab) {
       try { options = { code: JSON.parse(labJson) }; }
       catch { return toast.error("صيغة JSON لمحرر الأكواد غير صحيحة"); }
     }
+
     setBusy(true);
     await patch({ content, admin_note: note.trim() || null, options });
     setBusy(false);
