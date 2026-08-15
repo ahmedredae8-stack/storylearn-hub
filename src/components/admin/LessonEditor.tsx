@@ -340,7 +340,7 @@ function StepRow({ step, index, total, characters, lessonId }: {
   return (
     <div className="bg-card border-2 border-border rounded-2xl p-3 space-y-2">
       <div className="flex items-center gap-2">
-        <span className="text-[10px] font-extrabold bg-secondary rounded-full px-2 py-0.5">#{index + 1} • {kindLabel(step.kind)}</span>
+        <span className="text-[10px] font-extrabold bg-secondary rounded-full px-2 py-0.5">#{index + 1} • {initialSite ? "عارض موقع" : initialLab ? "محرر أكواد" : kindLabel(step.kind)}</span>
         <div className="flex-1" />
         <button disabled={index === 0} onClick={() => move(-1)} className="p-1 text-muted-foreground disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
         <button disabled={index === total - 1} onClick={() => move(1)} className="p-1 text-muted-foreground disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
