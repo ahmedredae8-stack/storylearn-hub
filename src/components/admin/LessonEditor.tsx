@@ -6,6 +6,8 @@ import { uploadFile } from "@/lib/upload";
 import { AvatarBubble } from "@/components/AvatarBubble";
 import { characterImage } from "@/lib/characterImage";
 import { CodeLab, isCodeLab } from "@/components/lesson/CodeLab";
+import { isSiteView, type SiteSpec } from "@/components/lesson/SiteViewer";
+
 import { Loader2, Plus, Save, Trash2, ArrowUp, ArrowDown, Upload, X } from "lucide-react";
 
 export const MOODS = [
@@ -118,8 +120,30 @@ export function LessonEditor({ lessonId, onClose }: { lessonId: string; onClose:
     } catch (e) { toast.error(e instanceof Error ? e.message : "فشل الحفظ"); } finally { setSaving(false); }
   }
 
-  async function addStep(kind: StepKind | "code") {
+  async function addStep(kind: StepKind | "code" | "site") {
     const order = (stepsQ.data?.length ?? 0) + 1;
+    if (kind === "site") {
+      const { error } = await supabase.from("lesson_steps").insert({
+        lesson_id: lessonId, order_index: order, kind: "text",
+        content: "افتح الموقع بالأسفل ونفّذ المطلوب ثم اضغط «تم».",
+        options: {
+          site: {
+            key: `site-${Date.now()}`,
+            title: "عارض المواقع",
+            tabs: [{ label: "الموقع", url: "https://example.com" }],
+            task: "سجّل الدخول إلى الموقع.",
+            steps: ["افتح الموقع", "سجّل الدخول", "ارجع واضغط تم"],
+            done_label: "تم ✅",
+            require_done: true,
+            height: 420,
+          },
+        },
+      } as never);
+      if (error) return toast.error(error.message);
+      qc.invalidateQueries({ queryKey: ["admin-steps", lessonId] });
+      return;
+    }
+
     if (kind === "code") {
       const { error } = await supabase.from("lesson_steps").insert({
         lesson_id: lessonId, order_index: order, kind: "text", content: "",
@@ -197,7 +221,9 @@ export function LessonEditor({ lessonId, onClose }: { lessonId: string; onClose:
                   <button onClick={() => addStep("image")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ صورة</button>
                   <button onClick={() => addStep("video")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ فيديو</button>
                   <button onClick={() => addStep("question")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ سؤال</button>
+                  <button onClick={() => addStep("site")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ عارض موقع</button>
                   <button onClick={() => addStep("code")} className="px-2 py-1 rounded-lg bg-foreground text-background">+ محرر أكواد</button>
+
                 </div>
               </div>
               {stepsQ.isLoading && <Center />}
@@ -248,6 +274,9 @@ function StepRow({ step, index, total, characters, lessonId }: {
   const [busy, setBusy] = useState(false);
   const initialLab = isCodeLab(step.options);
   const [labJson, setLabJson] = useState(initialLab ? JSON.stringify(initialLab, null, 2) : "");
+  const initialSite = isSiteView(step.options);
+  const [site, setSite] = useState<SiteSpec>(initialSite ?? { tabs: [] });
+
 
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin-steps", lessonId] });
 
@@ -260,10 +289,16 @@ function StepRow({ step, index, total, characters, lessonId }: {
   async function save() {
     let options: unknown = step.options ?? null;
     if (step.kind === "question") options = { choices, answer };
+    else if (initialSite) {
+      const tabs = (site.tabs ?? []).filter((t) => t.url.trim());
+      if (!tabs.length) return toast.error("أضف رابط موقع واحد على الأقل");
+      options = { site: { ...site, tabs, key: site.key || tabs[0].url } };
+    }
     else if (initialLab) {
       try { options = { code: JSON.parse(labJson) }; }
       catch { return toast.error("صيغة JSON لمحرر الأكواد غير صحيحة"); }
     }
+
     setBusy(true);
     await patch({ content, admin_note: note.trim() || null, options });
     setBusy(false);
@@ -305,7 +340,7 @@ function StepRow({ step, index, total, characters, lessonId }: {
   return (
     <div className="bg-card border-2 border-border rounded-2xl p-3 space-y-2">
       <div className="flex items-center gap-2">
-        <span className="text-[10px] font-extrabold bg-secondary rounded-full px-2 py-0.5">#{index + 1} • {kindLabel(step.kind)}</span>
+        <span className="text-[10px] font-extrabold bg-secondary rounded-full px-2 py-0.5">#{index + 1} • {initialSite ? "عارض موقع" : initialLab ? "محرر أكواد" : kindLabel(step.kind)}</span>
         <div className="flex-1" />
         <button disabled={index === 0} onClick={() => move(-1)} className="p-1 text-muted-foreground disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
         <button disabled={index === total - 1} onClick={() => move(1)} className="p-1 text-muted-foreground disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
@@ -365,6 +400,9 @@ function StepRow({ step, index, total, characters, lessonId }: {
           <button onClick={() => setChoices([...choices, ""])} className="text-xs font-extrabold text-primary flex items-center gap-1"><Plus className="w-3 h-3" /> خيار</button>
         </div>
       )}
+
+      {initialSite && <SiteFields spec={site} onChange={setSite} />}
+
 
       {initialLab && <CodeLabFields json={labJson} onChange={setLabJson} />}
 
@@ -445,6 +483,59 @@ function CodeLabFields({ json, onChange }: { json: string; onChange: (v: string)
           <CodeLab spec={spec as never} />
         </div>
       )}
+    </div>
+  );
+}
+
+/** Editor for a "site viewer" step: tabs (name + link) + the task the learner must do. */
+function SiteFields({ spec, onChange }: { spec: SiteSpec; onChange: (v: SiteSpec) => void }) {
+  const tabs = spec.tabs ?? [];
+  const set = (v: Partial<SiteSpec>) => onChange({ ...spec, ...v });
+  const setTab = (i: number, v: Partial<{ label: string; url: string }>) =>
+    set({ tabs: tabs.map((t, j) => (j === i ? { ...t, ...v } : t)) });
+
+  return (
+    <div className="rounded-2xl border-2 border-primary/25 bg-primary/5 p-3 space-y-2">
+      <div className="text-[11px] font-extrabold text-primary">🌐 عارض المواقع (تبويبات + مهمة)</div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="عنوان العارض"><input value={spec.title ?? ""} onChange={(e) => set({ title: e.target.value })} className={inp} /></Field>
+        <Field label="مُعرّف الجلسة (نفس المُعرّف = نفس الموقع محفوظ)">
+          <input dir="ltr" value={spec.key ?? ""} onChange={(e) => set({ key: e.target.value })} className={`${inp} font-mono text-[11.5px]`} />
+        </Field>
+      </div>
+      <p className="text-[10px] font-bold text-muted-foreground leading-5">
+        استخدم نفس «مُعرّف الجلسة» في رسائل لاحقة ليجد الطالب الموقع كما تركه تماماً (نفس تسجيل الدخول ونفس المكان).
+      </p>
+
+      <div className="space-y-1">
+        <span className="text-[11px] font-extrabold text-muted-foreground">التبويبات</span>
+        {tabs.map((t, i) => (
+          <div key={i} className="flex gap-1">
+            <input value={t.label} placeholder="الاسم" onChange={(e) => setTab(i, { label: e.target.value })} className={`${inp} w-28`} />
+            <input dir="ltr" value={t.url} placeholder="https://…" onChange={(e) => setTab(i, { url: e.target.value })} className={`${inp} flex-1 font-mono text-[11.5px]`} />
+            <button onClick={() => set({ tabs: tabs.filter((_, j) => j !== i) })} className="p-2 text-heart"><Trash2 className="w-4 h-4" /></button>
+          </div>
+        ))}
+        <button onClick={() => set({ tabs: [...tabs, { label: "تبويب", url: "https://" }] })} className="text-xs font-extrabold text-primary flex items-center gap-1">
+          <Plus className="w-3 h-3" /> إضافة تبويب
+        </button>
+      </div>
+
+      <Field label="المهمة المطلوبة"><input value={spec.task ?? ""} onChange={(e) => set({ task: e.target.value })} className={inp} /></Field>
+      <Field label="خطوات المهمة (سطر لكل خطوة)">
+        <textarea rows={3} value={(spec.steps ?? []).join("\n")}
+          onChange={(e) => set({ steps: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })}
+          className={`${inp} resize-none`} />
+      </Field>
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="نص زر التأكيد"><input value={spec.done_label ?? ""} onChange={(e) => set({ done_label: e.target.value })} className={inp} /></Field>
+        <Field label="ارتفاع العارض (px)"><input type="number" value={spec.height ?? 420} onChange={(e) => set({ height: Number(e.target.value) || 420 })} className={inp} /></Field>
+      </div>
+      <label className="flex items-center gap-2 text-[11px] font-extrabold">
+        <input type="checkbox" checked={spec.require_done ?? true} onChange={(e) => set({ require_done: e.target.checked })} />
+        منع المتابعة حتى يضغط الطالب «تم»
+      </label>
     </div>
   );
 }
