@@ -219,7 +219,9 @@ export function LessonEditor({ lessonId, onClose }: { lessonId: string; onClose:
                   <button onClick={() => addStep("image")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ صورة</button>
                   <button onClick={() => addStep("video")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ فيديو</button>
                   <button onClick={() => addStep("question")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ سؤال</button>
+                  <button onClick={() => addStep("site")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ عارض موقع</button>
                   <button onClick={() => addStep("code")} className="px-2 py-1 rounded-lg bg-foreground text-background">+ محرر أكواد</button>
+
                 </div>
               </div>
               {stepsQ.isLoading && <Center />}
