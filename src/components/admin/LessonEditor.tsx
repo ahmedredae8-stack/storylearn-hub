@@ -6,6 +6,8 @@ import { uploadFile } from "@/lib/upload";
 import { AvatarBubble } from "@/components/AvatarBubble";
 import { characterImage } from "@/lib/characterImage";
 import { CodeLab, isCodeLab } from "@/components/lesson/CodeLab";
+import { isSiteView, type SiteSpec } from "@/components/lesson/SiteViewer";
+
 import { Loader2, Plus, Save, Trash2, ArrowUp, ArrowDown, Upload, X } from "lucide-react";
 
 export const MOODS = [
