@@ -118,8 +118,30 @@ export function LessonEditor({ lessonId, onClose }: { lessonId: string; onClose:
     } catch (e) { toast.error(e instanceof Error ? e.message : "فشل الحفظ"); } finally { setSaving(false); }
   }
 
-  async function addStep(kind: StepKind | "code") {
+  async function addStep(kind: StepKind | "code" | "site") {
     const order = (stepsQ.data?.length ?? 0) + 1;
+    if (kind === "site") {
+      const { error } = await supabase.from("lesson_steps").insert({
+        lesson_id: lessonId, order_index: order, kind: "text",
+        content: "افتح الموقع بالأسفل ونفّذ المطلوب ثم اضغط «تم».",
+        options: {
+          site: {
+            key: `site-${Date.now()}`,
+            title: "عارض المواقع",
+            tabs: [{ label: "الموقع", url: "https://example.com" }],
+            task: "سجّل الدخول إلى الموقع.",
+            steps: ["افتح الموقع", "سجّل الدخول", "ارجع واضغط تم"],
+            done_label: "تم ✅",
+            require_done: true,
+            height: 420,
+          },
+        },
+      } as never);
+      if (error) return toast.error(error.message);
+      qc.invalidateQueries({ queryKey: ["admin-steps", lessonId] });
+      return;
+    }
+
     if (kind === "code") {
       const { error } = await supabase.from("lesson_steps").insert({
         lesson_id: lessonId, order_index: order, kind: "text", content: "",
