@@ -401,6 +401,9 @@ function StepRow({ step, index, total, characters, lessonId }: {
         </div>
       )}
 
+      {initialSite && <SiteFields spec={site} onChange={setSite} />}
+
+
       {initialLab && <CodeLabFields json={labJson} onChange={setLabJson} />}
 
       <button onClick={save} disabled={busy} className="w-full text-xs font-extrabold text-primary border-2 border-primary/30 rounded-xl py-2 disabled:opacity-50">
