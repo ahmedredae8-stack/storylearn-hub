@@ -216,22 +216,20 @@ export function LessonEditor({ lessonId, onClose }: { lessonId: string; onClose:
             <section className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="font-extrabold">خطوات الحوار ({stepsQ.data?.length ?? 0})</h3>
-                <div className="flex gap-1 text-[11px] font-extrabold">
-                  <button onClick={() => addStep("text")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ نص</button>
-                  <button onClick={() => addStep("image")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ صورة</button>
-                  <button onClick={() => addStep("video")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ فيديو</button>
-                  <button onClick={() => addStep("question")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ سؤال</button>
-                  <button onClick={() => addStep("site")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ عارض موقع</button>
-                  <button onClick={() => addStep("code")} className="px-2 py-1 rounded-lg bg-foreground text-background">+ محرر أكواد</button>
-
-                </div>
               </div>
               {stepsQ.isLoading && <Center />}
               {stepsQ.data?.map((s, i) => (
                 <StepRow key={s.id} step={s} index={i} total={stepsQ.data!.length} characters={charsQ.data ?? []} lessonId={lessonId} />
               ))}
               {stepsQ.data?.length === 0 && <p className="text-xs text-muted-foreground font-bold text-center py-6">لا خطوات بعد — أضف أول فقاعة حوار.</p>}
+
+              {/* شريط الإضافة أسفل آخر رسالة — لا حاجة للصعود للأعلى */}
+              <div className="sticky bottom-2 z-10 rounded-2xl border-2 border-primary/30 bg-background/95 backdrop-blur p-2 shadow-md">
+                <div className="text-[10px] font-extrabold text-muted-foreground mb-1 text-center">أضف رسالة جديدة بعد آخر رسالة</div>
+                <AddBar onAdd={addStep} />
+              </div>
             </section>
+
           </>
         )}
       </div>
