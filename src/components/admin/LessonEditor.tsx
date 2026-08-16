@@ -239,6 +239,20 @@ export function LessonEditor({ lessonId, onClose }: { lessonId: string; onClose:
 
 const inp = "w-full px-3 py-2 rounded-xl border-2 border-input bg-background font-bold text-sm";
 
+function AddBar({ onAdd }: { onAdd: (kind: StepKind | "code" | "site") => void }) {
+  return (
+    <div className="flex flex-wrap gap-1 text-[11px] font-extrabold justify-center">
+      <button onClick={() => onAdd("text")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ نص</button>
+      <button onClick={() => onAdd("image")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ صورة</button>
+      <button onClick={() => onAdd("video")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ فيديو</button>
+      <button onClick={() => onAdd("question")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ سؤال</button>
+      <button onClick={() => onAdd("site")} className="px-2 py-1 rounded-lg bg-primary/10 text-primary">+ عارض موقع</button>
+      <button onClick={() => onAdd("code")} className="px-2 py-1 rounded-lg bg-foreground text-background">+ محرر أكواد</button>
+    </div>
+  );
+}
+
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <label className="block"><span className="text-[11px] font-extrabold text-muted-foreground">{label}</span>{children}</label>;
 }
