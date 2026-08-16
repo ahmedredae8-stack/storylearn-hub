@@ -548,6 +548,11 @@ function SiteFields({ spec, onChange }: { spec: SiteSpec; onChange: (v: SiteSpec
         <input type="checkbox" checked={spec.require_done ?? true} onChange={(e) => set({ require_done: e.target.checked })} />
         منع المتابعة حتى يضغط الطالب «تم»
       </label>
+      <label className="flex items-center gap-2 text-[11px] font-extrabold">
+        <input type="checkbox" checked={spec.force_window ?? false} onChange={(e) => set({ force_window: e.target.checked })} />
+        افتحه دائماً في نافذة (للمواقع التي ترفض العرض بالداخل مثل Google)
+      </label>
+
     </div>
   );
 }
